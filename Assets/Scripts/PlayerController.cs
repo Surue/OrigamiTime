@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Spine.Unity;
 
 public class PlayerController : MonoBehaviour {
 
@@ -39,11 +40,15 @@ public class PlayerController : MonoBehaviour {
     [SerializeField]
     BoxCollider frontCollider;
 
+    //Animation
+    SkeletonAnimation skeleton;
+
     //State
     enum State {
         GROUND,
         FLY,
-        SWIM
+        SWIM,
+        DEAD
     }
 
     State state = State.GROUND;
@@ -62,9 +67,17 @@ public class PlayerController : MonoBehaviour {
         body = GetComponent<Rigidbody>();
 
         footCollider.enabled = false;
-	}
+
+        skeleton = GetComponentInChildren<SkeletonAnimation>();
+        skeleton.AnimationState.SetAnimation(0, "run", true);
+    }
 
     void FixedUpdate() {
+        if(state == State.DEAD) {
+            body.velocity = new Vector3(body.velocity.x, body.velocity.y, 0);
+            return;
+        }
+
         float verticalMovement = body.velocity.y + jumpImpulse;
 
         if(verticalMovement > jumpForce) {
@@ -153,12 +166,32 @@ public class PlayerController : MonoBehaviour {
             timer = 0;
         }
 
+        //State
+        switch(state) {
+            case State.GROUND:
+                fixedHeight = groundHeight;
+                break;
+
+            case State.FLY:
+                fixedHeight = airHeight;
+                break;
+
+            case State.SWIM:
+                fixedHeight = underwaterHeight;
+                break;
+
+            case State.DEAD:
+                return;
+        }
+
         if(isJumping) {
             if(Mathf.Abs(transform.position.y - fixedHeight) < 0.5f && body.velocity.y < 0f) {
                 isJumping = false;
                 if(state != State.GROUND) {
                     body.useGravity = false;
                 }
+
+                skeleton.AnimationState.SetAnimation(0, "run", true);
             }
         }
 
@@ -232,37 +265,43 @@ public class PlayerController : MonoBehaviour {
             case State.SWIM:
                 fixedHeight = underwaterHeight;
                 break;
+
+            case State.DEAD:
+                break;
         }
 
-        //Animal
-        switch(animal) {
-            case Animal.BIRD:
-                GetComponent<SpriteRenderer>().color = Color.red;
-                break;
-
-            case Animal.CAT:
-                GetComponent<SpriteRenderer>().color = Color.grey;
-                break;
-
-            case Animal.FISH:
-                GetComponent<SpriteRenderer>().color = Color.blue;
-                break;
+        //Animation
+        if(isJumping || switchState) {
+            if(body.velocity.y > 0) {
+                skeleton.AnimationState.SetAnimation(0, "jump", true);
+            } else {
+                skeleton.AnimationState.SetAnimation(0, "land", true);
+            }
         }
 	}
 
     private void OnTriggerEnter(Collider other) {
         if(other.gameObject.layer == LayerMask.NameToLayer("Ground")) {
             GameManager.Instance.PlayerDeath();
+
+            state = State.DEAD;
+            skeleton.AnimationState.SetAnimation(0, "dead", false);
         }
 
         if(other.gameObject.layer == LayerMask.NameToLayer("Ennemy")) {
             GameManager.Instance.PlayerDeath();
+
+            state = State.DEAD;
+            skeleton.AnimationState.SetAnimation(0, "dead", false);
         }
     }
 
     private void OnCollisionEnter(Collision collision) {
         if(collision.gameObject.layer == LayerMask.NameToLayer("Ennemy")) {
             GameManager.Instance.PlayerDeath();
+
+            state = State.DEAD;
+            skeleton.AnimationState.SetAnimation(0, "dead", false);
         }
     }
 
