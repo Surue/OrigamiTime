@@ -494,7 +494,7 @@ MonoBehaviour:
   logErrors: 0
   disableRenderingOnOverride: 1
   _animationName: run
-  loop: 0
+  loop: 1
   timeScale: 1
 --- !u!114 &114922731134750166
 MonoBehaviour:
