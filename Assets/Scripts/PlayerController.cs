@@ -80,7 +80,7 @@ public class PlayerController : MonoBehaviour {
 
                     case State.FLY:
                     case State.SWIM:
-                        verticalMovement *= 0.95f;
+                        verticalMovement *= fallingMultiplicator;
                         break;
                 }
             }
@@ -252,6 +252,16 @@ public class PlayerController : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other) {
         if(other.gameObject.layer == LayerMask.NameToLayer("Ground")) {
+            GameManager.Instance.PlayerDeath();
+        }
+
+        if(other.gameObject.layer == LayerMask.NameToLayer("Ennemy")) {
+            GameManager.Instance.PlayerDeath();
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision) {
+        if(collision.gameObject.layer == LayerMask.NameToLayer("Ennemy")) {
             GameManager.Instance.PlayerDeath();
         }
     }
