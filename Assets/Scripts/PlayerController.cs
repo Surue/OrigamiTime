@@ -41,7 +41,14 @@ public class PlayerController : MonoBehaviour {
     BoxCollider frontCollider;
 
     //Animation
-    SkeletonAnimation skeleton;
+    [Header("Animation")]
+    [SerializeField]
+    SkeletonAnimation skeletonCat;
+    [SerializeField]
+    SkeletonAnimation skeletonFish;
+    [SerializeField]
+    SkeletonAnimation skeletonBird;
+    SkeletonAnimation skeletonActive;
 
     //State
     enum State {
@@ -68,8 +75,11 @@ public class PlayerController : MonoBehaviour {
 
         footCollider.enabled = false;
 
-        skeleton = GetComponentInChildren<SkeletonAnimation>();
-        skeleton.AnimationState.SetAnimation(0, "run", true);
+        skeletonFish.gameObject.SetActive(false);
+        skeletonBird.gameObject.SetActive(false);
+
+        skeletonActive = skeletonCat;
+        skeletonActive.AnimationState.SetAnimation(0, "run", true);
     }
 
     void FixedUpdate() {
@@ -107,6 +117,7 @@ public class PlayerController : MonoBehaviour {
                 }
 
                 transform.position = new Vector3(transform.position.x, fixedHeight, 0);
+                skeletonActive.AnimationState.SetAnimation(0, "run", true);
             } else {
                 if(transform.position.y < fixedHeight) {
                     body.velocity = new Vector3(horizontalSpeed, jumpForce, 0);
@@ -191,9 +202,11 @@ public class PlayerController : MonoBehaviour {
                     body.useGravity = false;
                 }
 
-                skeleton.AnimationState.SetAnimation(0, "run", true);
+                skeletonActive.AnimationState.SetAnimation(0, "run", true);
             }
         }
+
+        #region Switch Animal Form
 
         //Switch state to Bird
         if(Input.GetKeyDown(KeyCode.A)) {
@@ -204,6 +217,10 @@ public class PlayerController : MonoBehaviour {
                     state = State.FLY;
                     animal = Animal.BIRD;
                     body.useGravity = false;
+
+                    skeletonCat.gameObject.SetActive(false);
+                    skeletonBird.gameObject.SetActive(true);
+                    skeletonActive = skeletonBird;
                 }
             }
         }
@@ -218,6 +235,10 @@ public class PlayerController : MonoBehaviour {
                 body.useGravity = true;
 
                 body.velocity = new Vector3(body.velocity.x, 0, 0);
+                
+                skeletonCat.gameObject.SetActive(true);
+                skeletonBird.gameObject.SetActive(false);
+                skeletonActive = skeletonCat;
             } else if(animal == Animal.FISH && isJumping) {
                 switchState = true;
                 isJumping = false;
@@ -227,6 +248,10 @@ public class PlayerController : MonoBehaviour {
                 body.useGravity = true;
 
                 body.velocity = new Vector3(body.velocity.x, 0, 0);
+
+                skeletonCat.gameObject.SetActive(true);
+                skeletonFish.gameObject.SetActive(false);
+                skeletonActive = skeletonCat;
             }
         }
 
@@ -240,6 +265,10 @@ public class PlayerController : MonoBehaviour {
                 body.useGravity = true;
 
                 body.velocity = new Vector3(body.velocity.x, 0, 0);
+
+                skeletonFish.gameObject.SetActive(true);
+                skeletonBird.gameObject.SetActive(false);
+                skeletonActive = skeletonFish;
             } else if(animal == Animal.CAT && (isJumping || body.velocity.y < -0.5f)) {
                 switchState = true;
                 isJumping = false;
@@ -249,8 +278,13 @@ public class PlayerController : MonoBehaviour {
                 body.useGravity = true;
 
                 body.velocity = new Vector3(body.velocity.x, 0, 0);
+
+                skeletonFish.gameObject.SetActive(true);
+                skeletonCat.gameObject.SetActive(false);
+                skeletonActive = skeletonFish;
             }
         }
+        #endregion
 
         //State
         switch(state) {
@@ -273,9 +307,9 @@ public class PlayerController : MonoBehaviour {
         //Animation
         if(isJumping || switchState) {
             if(body.velocity.y > 0) {
-                skeleton.AnimationState.SetAnimation(0, "jump", true);
+                skeletonActive.AnimationState.SetAnimation(0, "jump", true);
             } else {
-                skeleton.AnimationState.SetAnimation(0, "land", true);
+                skeletonActive.AnimationState.SetAnimation(0, "land", true);
             }
         }
 	}
@@ -285,14 +319,14 @@ public class PlayerController : MonoBehaviour {
             GameManager.Instance.PlayerDeath();
 
             state = State.DEAD;
-            skeleton.AnimationState.SetAnimation(0, "dead", false);
+            skeletonActive.AnimationState.SetAnimation(0, "dead", false);
         }
 
         if(other.gameObject.layer == LayerMask.NameToLayer("Ennemy")) {
             GameManager.Instance.PlayerDeath();
 
             state = State.DEAD;
-            skeleton.AnimationState.SetAnimation(0, "dead", false);
+            skeletonActive.AnimationState.SetAnimation(0, "dead", false);
         }
     }
 
@@ -301,7 +335,7 @@ public class PlayerController : MonoBehaviour {
             GameManager.Instance.PlayerDeath();
 
             state = State.DEAD;
-            skeleton.AnimationState.SetAnimation(0, "dead", false);
+            skeletonActive.AnimationState.SetAnimation(0, "dead", false);
         }
     }
 

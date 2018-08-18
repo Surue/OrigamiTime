@@ -1,15 +1,14 @@
 fileFormatVersion: 2
-guid: e6c504f25cd96cf4eb25b69dfa7d5e34
+guid: cdc7f7ae961661c47aa612461bece434
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
-    2100000: Tronc
-    2100002: Feuille
+    2100000: No Name
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Arbre_03
+    4300000: GeoSphere001
   externalObjects: {}
   materials:
     importMaterials: 1

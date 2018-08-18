@@ -1,0 +1,34 @@
+
+bird.png
+size: 2048,2048
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+backwing
+  rotate: false
+  xy: 822, 1051
+  size: 801, 770
+  orig: 801, 770
+  offset: 0, 0
+  index: -1
+birdbody
+  rotate: false
+  xy: 2, 1018
+  size: 818, 803
+  orig: 818, 803
+  offset: 0, 0
+  index: -1
+dead
+  rotate: false
+  xy: 2, 2
+  size: 300, 241
+  orig: 300, 241
+  offset: 0, 0
+  index: -1
+frontwing
+  rotate: false
+  xy: 2, 245
+  size: 801, 771
+  orig: 801, 771
+  offset: 0, 0
+  index: -1

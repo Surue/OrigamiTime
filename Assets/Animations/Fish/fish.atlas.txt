@@ -1,0 +1,27 @@
+
+fish.png
+size: 512,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+backfish
+  rotate: false
+  xy: 304, 322
+  size: 81, 61
+  orig: 81, 61
+  offset: 0, 0
+  index: -1
+dead
+  rotate: false
+  xy: 2, 142
+  size: 300, 241
+  orig: 300, 241
+  offset: 0, 0
+  index: -1
+frontfish
+  rotate: false
+  xy: 2, 55
+  size: 146, 85
+  orig: 146, 85
+  offset: 0, 0
+  index: -1

@@ -31,7 +31,6 @@ public class GameManager : MonoBehaviour {
 	}
 
     public void PlayerDeath() {
-        Debug.Log("DEATH");
         //SceneManager.LoadScene("LoseScene");
     }
 }
