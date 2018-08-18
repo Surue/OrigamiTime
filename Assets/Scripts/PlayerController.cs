@@ -31,6 +31,14 @@ public class PlayerController : MonoBehaviour {
     float underwaterHeight = -5f;
     bool switchState = false;
 
+    [Header("Sensor")]
+    [SerializeField]
+    BoxCollider footCollider;
+    [SerializeField]
+    BoxCollider headCollider;
+    [SerializeField]
+    BoxCollider frontCollider;
+
     //State
     enum State {
         GROUND,
@@ -52,6 +60,8 @@ public class PlayerController : MonoBehaviour {
 
     void Start () {
         body = GetComponent<Rigidbody>();
+
+        footCollider.enabled = false;
 	}
 
     void FixedUpdate() {
@@ -106,7 +116,6 @@ public class PlayerController : MonoBehaviour {
                 timer += Time.deltaTime;
 
                 if(timer > timeButtonPressedToSwitchState) {
-                    timer = 0;
                     isJumping = false;
                     switch(previousState) {
                         case State.FLY:
@@ -114,11 +123,13 @@ public class PlayerController : MonoBehaviour {
 
                         case State.GROUND:
                             state = State.FLY;
+                            animal = Animal.BIRD;
                             switchState = true;
                             break;
 
                         case State.SWIM:
                             state = State.GROUND;
+                            animal = Animal.CAT;
                             switchState = true;
                             break;
                     }
@@ -153,11 +164,13 @@ public class PlayerController : MonoBehaviour {
                 switchState = true;
                 state = State.GROUND;
                 animal = Animal.CAT;
+                footCollider.enabled = false;
             }else if(animal == Animal.FISH && isJumping) {
                 switchState = true;
                 isJumping = false;
                 state = State.GROUND;
                 animal = Animal.CAT;
+                footCollider.enabled = false;
             }
         }
 
@@ -167,11 +180,13 @@ public class PlayerController : MonoBehaviour {
                 switchState = true;
                 state = State.SWIM;
                 animal = Animal.FISH;
+                footCollider.enabled = true;
             } else if(animal == Animal.CAT && isJumping) {
                 switchState = true;
                 isJumping = false;
                 state = State.SWIM;
                 animal = Animal.FISH;
+                footCollider.enabled = true;
             }
         }
 
@@ -205,6 +220,12 @@ public class PlayerController : MonoBehaviour {
                 break;
         }
 	}
+
+    private void OnTriggerEnter(Collider other) {
+        if(other.gameObject.layer == LayerMask.NameToLayer("Ground")) {
+            GameManager.Instance.PlayerDeath();
+        }
+    }
 
     void OnDrawGizmos() {
         Gizmos.color = Color.green;
