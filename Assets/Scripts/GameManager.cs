@@ -32,5 +32,6 @@ public class GameManager : MonoBehaviour {
 
     public void PlayerDeath() {
         //SceneManager.LoadScene("LoseScene");
+        FindObjectOfType<TimerController>().StopTimer();
     }
 }

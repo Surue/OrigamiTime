@@ -69,6 +69,9 @@ public class PlayerController : MonoBehaviour {
         FISH
     }
     Animal animal = Animal.CAT;
+
+    //TimerController
+    TimerController timerController;
     #endregion
 
     void Start () {
@@ -81,6 +84,8 @@ public class PlayerController : MonoBehaviour {
 
         skeletonActive = skeletonCat;
         skeletonActive.AnimationState.SetAnimation(0, "run", true);
+
+        timerController = FindObjectOfType<TimerController>();
     }
 
     void FixedUpdate() {
@@ -163,6 +168,7 @@ public class PlayerController : MonoBehaviour {
                             animal = Animal.BIRD;
                             switchState = true;
                             body.useGravity = false;
+                            StartCoroutine(SwitchSkin(skeletonCat, skeletonBird));
                             break;
 
                         case State.SWIM:
@@ -170,6 +176,8 @@ public class PlayerController : MonoBehaviour {
                             animal = Animal.CAT;
                             switchState = true;
                             body.useGravity = false;
+
+                            StartCoroutine(SwitchSkin(skeletonFish, skeletonCat));
                             break;
                     }
                 }
@@ -315,19 +323,37 @@ public class PlayerController : MonoBehaviour {
 	}
 
     private void OnTriggerEnter(Collider other) {
-        if(other.gameObject.layer == LayerMask.NameToLayer("Ground")) {
-            GameManager.Instance.PlayerDeath();
+        if(other.gameObject.layer == LayerMask.NameToLayer("Coin")) {
+            Destroy(other.gameObject);
+            timerController.AddTime(10);
+            return;
+        }
 
-            state = State.DEAD;
-            skeletonActive.AnimationState.SetAnimation(0, "dead", false);
+        if(other.gameObject.layer == LayerMask.NameToLayer("Ground")) {
+            KillPlayer();
+            return;
         }
 
         if(other.gameObject.layer == LayerMask.NameToLayer("Ennemy")) {
-            GameManager.Instance.PlayerDeath();
-
-            state = State.DEAD;
-            skeletonActive.AnimationState.SetAnimation(0, "dead", false);
+            KillPlayer();
+            return;
         }
+
+        if(other.gameObject.layer == LayerMask.NameToLayer("Water") && animal != Animal.FISH) {
+            KillPlayer();
+            return;
+        }
+    }
+
+    void KillPlayer() {
+        GameManager.Instance.PlayerDeath();
+
+        state = State.DEAD;
+        skeletonActive.AnimationState.SetAnimation(0, "dead", false);
+
+        body.useGravity = true;
+
+        StopAllCoroutines();
     }
 
     private void OnCollisionEnter(Collision collision) {
