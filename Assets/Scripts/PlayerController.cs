@@ -122,7 +122,7 @@ public class PlayerController : MonoBehaviour {
                 isJumping = true;
                 previousState = state;
                 body.useGravity = true;
-                Debug.Log("Jump");
+                
                 jumpImpulse = jumpForce;
             } else {
                 timer += Time.deltaTime;
@@ -155,7 +155,6 @@ public class PlayerController : MonoBehaviour {
 
         if(isJumping) {
             if(Mathf.Abs(transform.position.y - fixedHeight) < 0.5f && body.velocity.y < 0f) {
-                Debug.Log("End jump");
                 isJumping = false;
                 if(state != State.GROUND) {
                     body.useGravity = false;
@@ -208,7 +207,7 @@ public class PlayerController : MonoBehaviour {
                 body.useGravity = true;
 
                 body.velocity = new Vector3(body.velocity.x, 0, 0);
-            } else if(animal == Animal.CAT && isJumping) {
+            } else if(animal == Animal.CAT && (isJumping || body.velocity.y < -0.5f)) {
                 switchState = true;
                 isJumping = false;
                 state = State.SWIM;
