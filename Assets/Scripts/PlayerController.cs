@@ -67,6 +67,10 @@ public class PlayerController : MonoBehaviour {
     void FixedUpdate() {
         float verticalMovement = body.velocity.y + jumpImpulse;
 
+        if(verticalMovement > jumpForce) {
+            verticalMovement = jumpForce;
+        }
+
         if(isJumping) {
             if(verticalMovement < 0) {
                 switch(state) {
@@ -84,8 +88,12 @@ public class PlayerController : MonoBehaviour {
 
         if(switchState) {
             if(Mathf.Abs(transform.position.y - fixedHeight) < 0.5f) {
-                transform.position = new Vector3(transform.position.x, fixedHeight, 0);
                 switchState = false;
+                if(state == State.SWIM) {
+                    body.useGravity = false;
+                }
+
+                transform.position = new Vector3(transform.position.x, fixedHeight, 0);
             } else {
                 if(transform.position.y < fixedHeight) {
                     body.velocity = new Vector3(horizontalSpeed, jumpForce, 0);
@@ -94,8 +102,12 @@ public class PlayerController : MonoBehaviour {
                 }
             }
         }else if(!isJumping) {
-            body.velocity = new Vector3(horizontalSpeed, 0, 0);
-            transform.position = new Vector3(transform.position.x, fixedHeight, 0);
+            if(state != State.GROUND) {
+                body.velocity = new Vector3(horizontalSpeed, 0, 0);
+                transform.position = new Vector3(transform.position.x, fixedHeight, 0);
+            } else {
+                body.velocity = new Vector3(horizontalSpeed, body.velocity.y, 0);
+            }
         } else {
             body.velocity = new Vector3(horizontalSpeed, verticalMovement, 0);
         }
@@ -110,7 +122,7 @@ public class PlayerController : MonoBehaviour {
                 isJumping = true;
                 previousState = state;
                 body.useGravity = true;
-
+                Debug.Log("Jump");
                 jumpImpulse = jumpForce;
             } else {
                 timer += Time.deltaTime;
@@ -125,12 +137,14 @@ public class PlayerController : MonoBehaviour {
                             state = State.FLY;
                             animal = Animal.BIRD;
                             switchState = true;
+                            body.useGravity = false;
                             break;
 
                         case State.SWIM:
                             state = State.GROUND;
                             animal = Animal.CAT;
                             switchState = true;
+                            body.useGravity = false;
                             break;
                     }
                 }
@@ -140,9 +154,12 @@ public class PlayerController : MonoBehaviour {
         }
 
         if(isJumping) {
-            if(Mathf.Abs(transform.position.y - fixedHeight) < 0.5f && body.velocity.y < 0) {
+            if(Mathf.Abs(transform.position.y - fixedHeight) < 0.5f && body.velocity.y < 0f) {
+                Debug.Log("End jump");
                 isJumping = false;
-                body.useGravity = false;
+                if(state != State.GROUND) {
+                    body.useGravity = false;
+                }
             }
         }
 
@@ -154,6 +171,7 @@ public class PlayerController : MonoBehaviour {
                     isJumping = false;
                     state = State.FLY;
                     animal = Animal.BIRD;
+                    body.useGravity = false;
                 }
             }
         }
@@ -165,12 +183,18 @@ public class PlayerController : MonoBehaviour {
                 state = State.GROUND;
                 animal = Animal.CAT;
                 footCollider.enabled = false;
-            }else if(animal == Animal.FISH && isJumping) {
+                body.useGravity = true;
+
+                body.velocity = new Vector3(body.velocity.x, 0, 0);
+            } else if(animal == Animal.FISH && isJumping) {
                 switchState = true;
                 isJumping = false;
                 state = State.GROUND;
                 animal = Animal.CAT;
                 footCollider.enabled = false;
+                body.useGravity = true;
+
+                body.velocity = new Vector3(body.velocity.x, 0, 0);
             }
         }
 
@@ -181,12 +205,18 @@ public class PlayerController : MonoBehaviour {
                 state = State.SWIM;
                 animal = Animal.FISH;
                 footCollider.enabled = true;
+                body.useGravity = true;
+
+                body.velocity = new Vector3(body.velocity.x, 0, 0);
             } else if(animal == Animal.CAT && isJumping) {
                 switchState = true;
                 isJumping = false;
                 state = State.SWIM;
                 animal = Animal.FISH;
                 footCollider.enabled = true;
+                body.useGravity = true;
+
+                body.velocity = new Vector3(body.velocity.x, 0, 0);
             }
         }
 
