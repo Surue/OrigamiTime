@@ -49,6 +49,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField]
     SkeletonAnimation skeletonBird;
     SkeletonAnimation skeletonActive;
+    bool isMorphing = false;
 
     //State
     enum State {
@@ -218,9 +219,7 @@ public class PlayerController : MonoBehaviour {
                     animal = Animal.BIRD;
                     body.useGravity = false;
 
-                    skeletonCat.gameObject.SetActive(false);
-                    skeletonBird.gameObject.SetActive(true);
-                    skeletonActive = skeletonBird;
+                    StartCoroutine(SwitchSkin(skeletonCat, skeletonBird));
                 }
             }
         }
@@ -235,10 +234,8 @@ public class PlayerController : MonoBehaviour {
                 body.useGravity = true;
 
                 body.velocity = new Vector3(body.velocity.x, 0, 0);
-                
-                skeletonCat.gameObject.SetActive(true);
-                skeletonBird.gameObject.SetActive(false);
-                skeletonActive = skeletonCat;
+
+                StartCoroutine(SwitchSkin(skeletonBird, skeletonCat));
             } else if(animal == Animal.FISH && isJumping) {
                 switchState = true;
                 isJumping = false;
@@ -248,10 +245,8 @@ public class PlayerController : MonoBehaviour {
                 body.useGravity = true;
 
                 body.velocity = new Vector3(body.velocity.x, 0, 0);
-
-                skeletonCat.gameObject.SetActive(true);
-                skeletonFish.gameObject.SetActive(false);
-                skeletonActive = skeletonCat;
+                
+                StartCoroutine(SwitchSkin(skeletonFish, skeletonCat));
             }
         }
 
@@ -266,9 +261,7 @@ public class PlayerController : MonoBehaviour {
 
                 body.velocity = new Vector3(body.velocity.x, 0, 0);
 
-                skeletonFish.gameObject.SetActive(true);
-                skeletonBird.gameObject.SetActive(false);
-                skeletonActive = skeletonFish;
+                StartCoroutine(SwitchSkin(skeletonBird, skeletonFish));
             } else if(animal == Animal.CAT && (isJumping || body.velocity.y < -0.5f)) {
                 switchState = true;
                 isJumping = false;
@@ -279,9 +272,7 @@ public class PlayerController : MonoBehaviour {
 
                 body.velocity = new Vector3(body.velocity.x, 0, 0);
 
-                skeletonFish.gameObject.SetActive(true);
-                skeletonCat.gameObject.SetActive(false);
-                skeletonActive = skeletonFish;
+                StartCoroutine(SwitchSkin(skeletonCat, skeletonFish));
             }
         }
         #endregion
@@ -305,11 +296,20 @@ public class PlayerController : MonoBehaviour {
         }
 
         //Animation
-        if(isJumping || switchState) {
+        if(isJumping) {
             if(body.velocity.y > 0) {
                 skeletonActive.AnimationState.SetAnimation(0, "jump", true);
             } else {
                 skeletonActive.AnimationState.SetAnimation(0, "land", true);
+            }
+        }
+        if(switchState) {
+            if(!isMorphing) {
+                if(body.velocity.y > 0) {
+                    skeletonActive.AnimationState.SetAnimation(0, "jump", true);
+                } else {
+                    skeletonActive.AnimationState.SetAnimation(0, "land", true);
+                }
             }
         }
 	}
@@ -337,6 +337,19 @@ public class PlayerController : MonoBehaviour {
             state = State.DEAD;
             skeletonActive.AnimationState.SetAnimation(0, "dead", false);
         }
+    }
+
+    IEnumerator SwitchSkin(SkeletonAnimation previousAnimation, SkeletonAnimation nextAnimation) {
+        isMorphing = true;
+        skeletonActive.AnimationState.SetAnimation(0, "out", false);
+        yield return new WaitForSeconds(0.367f);
+
+        previousAnimation.gameObject.SetActive(false);
+        nextAnimation.gameObject.SetActive(true);
+        skeletonActive = nextAnimation;
+        skeletonActive.AnimationState.SetAnimation(0, "in", false);
+        yield return new WaitForSeconds(0.367f);
+        isMorphing = false;
     }
 
     void OnDrawGizmos() {
