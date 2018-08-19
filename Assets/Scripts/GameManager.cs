@@ -42,4 +42,12 @@ public class GameManager : MonoBehaviour {
     public void PlayerWin() {
         winSplash.gameObject.SetActive(true);
     }
+
+    public void LoadScene(string name) {
+        SceneManager.LoadScene(name);
+    }
+
+    public void Quit() {
+        Application.Quit();
+    }
 }
