@@ -5,11 +5,11 @@ ModelImporter:
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
-    2100000: Sun_Mat
-    2100002: 'Material #48'
+    2100000: INT_SUN
+    2100002: EXT_SUN
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Plane002
+    4300000: Sun
   externalObjects: {}
   materials:
     importMaterials: 1

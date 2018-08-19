@@ -9,7 +9,7 @@ ModelImporter:
     2100002: 'Material #61'
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Box002
+    4300000: VikingBoat
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -64,8 +64,8 @@ ModelImporter:
     previousCalculatedGlobalScale: 1
     hasPreviousCalculatedGlobalScale: 0
   tangentSpace:
-    normalSmoothAngle: 60
-    normalImportMode: 0
+    normalSmoothAngle: 0
+    normalImportMode: 1
     tangentImportMode: 3
     normalCalculationMode: 4
   importAnimation: 1
