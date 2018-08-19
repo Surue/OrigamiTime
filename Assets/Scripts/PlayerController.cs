@@ -152,35 +152,7 @@ public class PlayerController : MonoBehaviour {
                 body.useGravity = true;
                 
                 jumpImpulse = jumpForce;
-            } else {
-                timer += Time.deltaTime;
-
-                if(timer > timeButtonPressedToSwitchState) {
-                    isJumping = false;
-                    switch(animal) {
-                        case Animal.CAT:
-                            animal = Animal.BIRD;
-                            switchState = true;
-                            body.useGravity = false;
-                            StartCoroutine(SwitchSkin(skeletonCat, skeletonBird));
-
-                            fixedHeight = airHeight;
-                            break;
-
-                        case Animal.FISH:
-                            animal = Animal.CAT;
-                            switchState = true;
-                            body.useGravity = false;
-
-                            fixedHeight = groundHeight;
-
-                            StartCoroutine(SwitchSkin(skeletonFish, skeletonCat));
-                            break;
-                    }
-                }
-            }
-        } else {
-            timer = 0;
+            } 
         }
 
         if(isJumping) {
@@ -301,16 +273,22 @@ public class PlayerController : MonoBehaviour {
 
         if(other.gameObject.layer == LayerMask.NameToLayer("Ground") && invulnerabilityTime < 0) {
             KillPlayer();
+
+            GameManager.Instance.PlayerDeath();
             return;
         }
 
         if(other.gameObject.layer == LayerMask.NameToLayer("Ennemy")) {
             KillPlayer();
+
+            GameManager.Instance.PlayerDeath();
             return;
         }
 
         if(other.gameObject.layer == LayerMask.NameToLayer("Water") && animal != Animal.FISH) {
             KillPlayer();
+
+            GameManager.Instance.PlayerDeath();
             return;
         }
     }
@@ -318,12 +296,13 @@ public class PlayerController : MonoBehaviour {
     void OnCollisionEnter(Collision collision) {
         if(collision.gameObject.layer == LayerMask.NameToLayer("Ennemy")) {
             KillPlayer();
+
+            GameManager.Instance.PlayerDeath();
             return;
         }
     }
 
-    void KillPlayer() {
-        GameManager.Instance.PlayerDeath();
+    public void KillPlayer() {
 
         isDead = true;
         skeletonActive.AnimationState.SetAnimation(0, "dead", false);
