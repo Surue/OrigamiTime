@@ -52,15 +52,7 @@ public class PlayerController : MonoBehaviour {
     bool isMorphing = false;
 
     //State
-    enum State {
-        GROUND,
-        FLY,
-        SWIM,
-        DEAD
-    }
-
-    State state = State.GROUND;
-    State previousState = State.GROUND;
+    bool isDead = false;
 
     //Animal state
     enum Animal {
@@ -72,6 +64,9 @@ public class PlayerController : MonoBehaviour {
 
     //TimerController
     TimerController timerController;
+
+    //invulnerability time
+    float invulnerabilityTime = 1f;
     #endregion
 
     void Start () {
@@ -89,9 +84,13 @@ public class PlayerController : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        if(state == State.DEAD) {
+        if(isDead) {
             body.velocity = new Vector3(body.velocity.x, body.velocity.y, 0);
             return;
+        }
+
+        if(!body.useGravity && !isJumping) {
+            body.velocity = new Vector3(body.velocity.x, 0, 0);
         }
 
         float verticalMovement = body.velocity.y + jumpImpulse;
@@ -102,27 +101,17 @@ public class PlayerController : MonoBehaviour {
 
         if(isJumping) {
             if(verticalMovement < 0) {
-                switch(state) {
-                    case State.GROUND:
-                        verticalMovement *= fallingMultiplicator;
-                        break;
-
-                    case State.FLY:
-                    case State.SWIM:
-                        verticalMovement *= fallingMultiplicator;
-                        break;
-                }
+                verticalMovement *= fallingMultiplicator;
             }
         }
 
         if(switchState) {
             if(Mathf.Abs(transform.position.y - fixedHeight) < 0.5f) {
                 switchState = false;
-                if(state == State.SWIM) {
+                if(animal == Animal.FISH) {
                     body.useGravity = false;
                 }
 
-                transform.position = new Vector3(transform.position.x, fixedHeight, 0);
                 skeletonActive.AnimationState.SetAnimation(0, "run", true);
             } else {
                 if(transform.position.y < fixedHeight) {
@@ -132,7 +121,7 @@ public class PlayerController : MonoBehaviour {
                 }
             }
         }else if(!isJumping) {
-            if(state != State.GROUND) {
+            if(animal != Animal.CAT) {
                 body.velocity = new Vector3(horizontalSpeed, 0, 0);
                 transform.position = new Vector3(transform.position.x, fixedHeight, 0);
             } else {
@@ -144,13 +133,16 @@ public class PlayerController : MonoBehaviour {
     }
     
     void Update () {
+        if(isDead) {
+            return;
+        }
+
         jumpImpulse = 0;
 
         //jump
         if(Input.GetButton("Jump") && !switchState) {
             if(!isJumping) {
                 isJumping = true;
-                previousState = state;
                 body.useGravity = true;
                 
                 jumpImpulse = jumpForce;
@@ -159,23 +151,22 @@ public class PlayerController : MonoBehaviour {
 
                 if(timer > timeButtonPressedToSwitchState) {
                     isJumping = false;
-                    switch(previousState) {
-                        case State.FLY:
-                            break;
-
-                        case State.GROUND:
-                            state = State.FLY;
+                    switch(animal) {
+                        case Animal.CAT:
                             animal = Animal.BIRD;
                             switchState = true;
                             body.useGravity = false;
                             StartCoroutine(SwitchSkin(skeletonCat, skeletonBird));
+
+                            fixedHeight = airHeight;
                             break;
 
-                        case State.SWIM:
-                            state = State.GROUND;
+                        case Animal.FISH:
                             animal = Animal.CAT;
                             switchState = true;
                             body.useGravity = false;
+
+                            fixedHeight = groundHeight;
 
                             StartCoroutine(SwitchSkin(skeletonFish, skeletonCat));
                             break;
@@ -186,32 +177,15 @@ public class PlayerController : MonoBehaviour {
             timer = 0;
         }
 
-        //State
-        switch(state) {
-            case State.GROUND:
-                fixedHeight = groundHeight;
-                break;
-
-            case State.FLY:
-                fixedHeight = airHeight;
-                break;
-
-            case State.SWIM:
-                fixedHeight = underwaterHeight;
-                break;
-
-            case State.DEAD:
-                return;
-        }
-
         if(isJumping) {
             if(Mathf.Abs(transform.position.y - fixedHeight) < 0.5f && body.velocity.y < 0f) {
                 isJumping = false;
-                if(state != State.GROUND) {
-                    body.useGravity = false;
-                }
 
                 skeletonActive.AnimationState.SetAnimation(0, "run", true);
+
+                if(animal != Animal.CAT) {
+                    body.useGravity = false;
+                }
             }
         }
 
@@ -223,11 +197,12 @@ public class PlayerController : MonoBehaviour {
                 if(isJumping) {
                     switchState = true;
                     isJumping = false;
-                    state = State.FLY;
                     animal = Animal.BIRD;
                     body.useGravity = false;
 
                     StartCoroutine(SwitchSkin(skeletonCat, skeletonBird));
+
+                    fixedHeight = airHeight;
                 }
             }
         }
@@ -236,7 +211,6 @@ public class PlayerController : MonoBehaviour {
         if(Input.GetKeyDown(KeyCode.S)) {
             if(animal == Animal.BIRD) {
                 switchState = true;
-                state = State.GROUND;
                 animal = Animal.CAT;
                 footCollider.enabled = false;
                 body.useGravity = true;
@@ -244,10 +218,11 @@ public class PlayerController : MonoBehaviour {
                 body.velocity = new Vector3(body.velocity.x, 0, 0);
 
                 StartCoroutine(SwitchSkin(skeletonBird, skeletonCat));
+
+                fixedHeight = groundHeight;
             } else if(animal == Animal.FISH && isJumping) {
                 switchState = true;
                 isJumping = false;
-                state = State.GROUND;
                 animal = Animal.CAT;
                 footCollider.enabled = false;
                 body.useGravity = true;
@@ -255,6 +230,8 @@ public class PlayerController : MonoBehaviour {
                 body.velocity = new Vector3(body.velocity.x, 0, 0);
                 
                 StartCoroutine(SwitchSkin(skeletonFish, skeletonCat));
+
+                fixedHeight = groundHeight;
             }
         }
 
@@ -262,7 +239,6 @@ public class PlayerController : MonoBehaviour {
         if(Input.GetKeyDown(KeyCode.D)) {
             if(animal == Animal.BIRD) {
                 switchState = true;
-                state = State.SWIM;
                 animal = Animal.FISH;
                 footCollider.enabled = true;
                 body.useGravity = true;
@@ -270,10 +246,11 @@ public class PlayerController : MonoBehaviour {
                 body.velocity = new Vector3(body.velocity.x, 0, 0);
 
                 StartCoroutine(SwitchSkin(skeletonBird, skeletonFish));
+
+                fixedHeight = underwaterHeight;
             } else if(animal == Animal.CAT && (isJumping || body.velocity.y < -0.5f)) {
                 switchState = true;
                 isJumping = false;
-                state = State.SWIM;
                 animal = Animal.FISH;
                 footCollider.enabled = true;
                 body.useGravity = true;
@@ -281,27 +258,11 @@ public class PlayerController : MonoBehaviour {
                 body.velocity = new Vector3(body.velocity.x, 0, 0);
 
                 StartCoroutine(SwitchSkin(skeletonCat, skeletonFish));
+
+                fixedHeight = underwaterHeight;
             }
         }
         #endregion
-
-        //State
-        switch(state) {
-            case State.GROUND:
-                fixedHeight = groundHeight;
-                break;
-
-            case State.FLY:
-                fixedHeight = airHeight;
-                break;
-
-            case State.SWIM:
-                fixedHeight = underwaterHeight;
-                break;
-
-            case State.DEAD:
-                break;
-        }
 
         //Animation
         if(isJumping) {
@@ -311,6 +272,7 @@ public class PlayerController : MonoBehaviour {
                 skeletonActive.AnimationState.SetAnimation(0, "land", true);
             }
         }
+
         if(switchState) {
             if(!isMorphing) {
                 if(body.velocity.y > 0) {
@@ -320,6 +282,8 @@ public class PlayerController : MonoBehaviour {
                 }
             }
         }
+
+        invulnerabilityTime -= Time.deltaTime;
 	}
 
     private void OnTriggerEnter(Collider other) {
@@ -329,7 +293,7 @@ public class PlayerController : MonoBehaviour {
             return;
         }
 
-        if(other.gameObject.layer == LayerMask.NameToLayer("Ground")) {
+        if(other.gameObject.layer == LayerMask.NameToLayer("Ground") && invulnerabilityTime < 0) {
             KillPlayer();
             return;
         }
@@ -345,24 +309,22 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    void OnCollisionEnter(Collision collision) {
+        if(collision.gameObject.layer == LayerMask.NameToLayer("Ennemy")) {
+            KillPlayer();
+            return;
+        }
+    }
+
     void KillPlayer() {
         GameManager.Instance.PlayerDeath();
 
-        state = State.DEAD;
+        isDead = true;
         skeletonActive.AnimationState.SetAnimation(0, "dead", false);
 
         body.useGravity = true;
 
         StopAllCoroutines();
-    }
-
-    private void OnCollisionEnter(Collision collision) {
-        if(collision.gameObject.layer == LayerMask.NameToLayer("Ennemy")) {
-            GameManager.Instance.PlayerDeath();
-
-            state = State.DEAD;
-            skeletonActive.AnimationState.SetAnimation(0, "dead", false);
-        }
     }
 
     IEnumerator SwitchSkin(SkeletonAnimation previousAnimation, SkeletonAnimation nextAnimation) {

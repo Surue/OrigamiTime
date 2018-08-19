@@ -1,0 +1,13 @@
+
+dragon.png
+size: 4096,4096
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+fulldragonman
+  rotate: false
+  xy: 2, 963
+  size: 2465, 1502
+  orig: 2465, 1502
+  offset: 0, 0
+  index: -1
