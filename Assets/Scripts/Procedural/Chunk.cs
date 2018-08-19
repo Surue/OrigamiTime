@@ -17,6 +17,20 @@ public class Chunk : MonoBehaviour {
 	void Start () {
         leftAnchor = Vector3.left * (width * 0.5f);
         rightAnchor = Vector3.right * (width * 0.5f);
+
+        //Look spawn
+        SpawnPoint[] spawnPoints = GetComponentsInChildren<SpawnPoint>();
+
+        List<SpawnPoint> coinSpawn = new List<SpawnPoint>();
+        List<SpawnPoint> ennemySpawn = new List<SpawnPoint>();
+
+        foreach(SpawnPoint spawn in spawnPoints) {
+            if(spawn.so_spawnable.type == Spawnable.Type.COLLTECTIBLE) {
+                coinSpawn.Add(spawn);
+            } else {
+                ennemySpawn.Add(spawn);
+            }
+        }
     }
 	
 	// Update is called once per frame
