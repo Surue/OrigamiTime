@@ -125,7 +125,13 @@ public class PlayerController : MonoBehaviour {
                 body.velocity = new Vector3(horizontalSpeed, 0, 0);
                 transform.position = new Vector3(transform.position.x, fixedHeight, 0);
             } else {
-                body.velocity = new Vector3(horizontalSpeed, body.velocity.y, 0);
+                if(body.velocity.y > 0) {
+                    body.useGravity = false;
+                    body.velocity = new Vector3(horizontalSpeed, body.velocity.y, 0);
+                } else {
+                    body.useGravity = true;
+                    body.velocity = new Vector3(horizontalSpeed, body.velocity.y, 0);
+                }
             }
         } else {
             body.velocity = new Vector3(horizontalSpeed, verticalMovement, 0);
