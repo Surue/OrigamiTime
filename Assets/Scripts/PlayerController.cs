@@ -67,6 +67,9 @@ public class PlayerController : MonoBehaviour {
 
     //invulnerability time
     float invulnerabilityTime = 1f;
+
+    //Ultimate coin
+    public int nbUltimeCoin = 0;
     #endregion
 
     void Start () {
@@ -290,6 +293,12 @@ public class PlayerController : MonoBehaviour {
 
             GameManager.Instance.PlayerDeath();
             return;
+        }
+
+        if(other.gameObject.layer == LayerMask.NameToLayer("UltimateCoin")) {
+            Destroy(other.gameObject);
+            timerController.AddTime(10);
+            nbUltimeCoin++;
         }
     }
 

@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class MapGenerator : MonoBehaviour {
 
+    [Header("Ultimate Coin")]
+    [SerializeField]
+    public List<GameObject> ultimatesCoins;
+
     [Header("Chunks")]
     [SerializeField]
     List<Chunk> chunks;
