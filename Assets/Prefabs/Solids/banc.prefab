@@ -21,7 +21,8 @@ GameObject:
   - component: {fileID: 4558943607878814}
   - component: {fileID: 33089924528100368}
   - component: {fileID: 23286965028091880}
-  m_Layer: 0
+  - component: {fileID: 65759236621905164}
+  m_Layer: 10
   m_Name: banc
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,3 +84,15 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1906091599218778}
   m_Mesh: {fileID: 4300000, guid: ae7ed6a8423de094abe4f3677648511d, type: 3}
+--- !u!65 &65759236621905164
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1906091599218778}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.5000012, y: 1.0492595, z: 1.3084171}
+  m_Center: {x: -1.2500006, y: 0.5246294, z: 0.6542083}

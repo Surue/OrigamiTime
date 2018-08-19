@@ -18,6 +18,10 @@ public class Chunk : MonoBehaviour {
         leftAnchor = Vector3.left * (width * 0.5f);
         rightAnchor = Vector3.right * (width * 0.5f);
 
+        if(FindObjectsOfType<Chunk>().Length < 2) {
+            return;
+        }
+
         //Look spawn
         SpawnPoint[] spawnPoints = GetComponentsInChildren<SpawnPoint>();
 
@@ -33,7 +37,7 @@ public class Chunk : MonoBehaviour {
         }
 
         if(coinSpawn.Count > 0) {
-            if(Random.Range(0,4) > 2) {
+            if(Random.Range(0,4) > 0) {
                 SpawnPoint spawn = coinSpawn[Random.Range(0, coinSpawn.Count)];
                 GameObject instance = Instantiate(FindObjectOfType<MapGenerator>().ultimatesCoins[FindObjectOfType<PlayerController>().nbUltimeCoin], spawn.transform);
             } else {

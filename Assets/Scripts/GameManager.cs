@@ -7,7 +7,11 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour {
 
     [SerializeField]
-    Image winSplash;
+    GameObject winSplash;
+
+    [SerializeField]
+    [HideInInspector]
+    public float timer;
 
     static GameManager instance;
     public static GameManager Instance {
@@ -26,8 +30,13 @@ public class GameManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-		
-	}
+        DontDestroyOnLoad(this);
+
+        if(GameObject.Find("WinSplash")) {
+            winSplash = GameObject.Find("WinSplash");
+            winSplash.gameObject.SetActive(false);
+        }
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -35,16 +44,35 @@ public class GameManager : MonoBehaviour {
 	}
 
     public void PlayerDeath() {
-        //SceneManager.LoadScene("LoseScene");
         FindObjectOfType<TimerController>().StopTimer();
+        timer = FindObjectOfType<TimerController>().GetTimer();
+        StartCoroutine(loadLoseScene());
+    }
+
+    IEnumerator loadLoseScene() {
+        yield return new WaitForSeconds(5);
+        SceneManager.LoadScene("LoseScene");
+        Debug.Log(timer);
     }
 
     public void PlayerWin() {
-        winSplash.gameObject.SetActive(true);
+        winSplash.SetActive(true);
     }
 
     public void LoadScene(string name) {
         SceneManager.LoadScene(name);
+        if(name == "Procedural") {
+            StartCoroutine(FindSplashWin());
+        }
+    }
+
+    IEnumerator FindSplashWin() {
+        while(!GameObject.Find("WinSplash")) {
+            yield return new WaitForFixedUpdate();
+        }
+
+        winSplash = GameObject.Find("WinSplash").gameObject;
+        winSplash.SetActive(false);
     }
 
     public void Quit() {
