@@ -31,6 +31,20 @@ public class Chunk : MonoBehaviour {
                 ennemySpawn.Add(spawn);
             }
         }
+
+        if(coinSpawn.Count > 0) {
+            SpawnPoint spawn = coinSpawn[Random.Range(0, coinSpawn.Count)];
+            GameObject instance = Instantiate(spawn.so_spawnable.prefabToSpawn, spawn.transform);
+            Debug.Log(instance.name);
+        }
+
+        for(int i = 0; i < ennemySpawn.Count;i++) {
+            if(Random.Range(0,3) > 0.5f) {
+                Instantiate(ennemySpawn[i].so_spawnable.prefabToSpawn, ennemySpawn[i].transform);
+            } else {
+                i = ennemySpawn.Count;
+            }
+        }
     }
 	
 	// Update is called once per frame
