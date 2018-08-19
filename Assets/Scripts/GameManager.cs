@@ -61,9 +61,10 @@ public class GameManager : MonoBehaviour {
 
     public void LoadScene(string name) {
         SceneManager.LoadScene(name);
-        if(name == "Procedural") {
-            StartCoroutine(FindSplashWin());
-        }
+    }
+
+    public void newGame() {
+        StartCoroutine(FindSplashWin());
     }
 
     IEnumerator FindSplashWin() {

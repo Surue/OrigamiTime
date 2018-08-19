@@ -155,10 +155,6 @@ public class PlayerController : MonoBehaviour {
     }
     
     void Update () {
-        if(Input.GetKeyDown(KeyCode.Q)) {
-            Win();
-        }
-
         if(isDead) {
             return;
         }

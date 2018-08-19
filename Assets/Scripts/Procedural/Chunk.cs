@@ -37,7 +37,7 @@ public class Chunk : MonoBehaviour {
         }
 
         if(coinSpawn.Count > 0) {
-            if(Random.Range(0,4) > 0) {
+            if(Random.Range(0,4) > 2) {
                 SpawnPoint spawn = coinSpawn[Random.Range(0, coinSpawn.Count)];
                 GameObject instance = Instantiate(FindObjectOfType<MapGenerator>().ultimatesCoins[FindObjectOfType<PlayerController>().nbUltimeCoin], spawn.transform);
             } else {
