@@ -54,8 +54,8 @@ public class MapGenerator : MonoBehaviour {
     }
 
     void AddChunk() {
-        float t = Mathf.PerlinNoise(Time.time * 0.05f, 0) * (int)Type.LENGHT - 1;
-        Debug.Log(Mathf.PerlinNoise(Time.time * 0.05f, 0) * (int)Type.LENGHT - 1);
+        //float t = Mathf.PerlinNoise(Time.time * 0.05f, 0) * (int)Type.LENGHT - 1;
+        float t = Mathf.PingPong(Time.time * 0.2f, (int)Type.LENGHT - 1);
 
         Chunk c = Instantiate(GetChunk(Mathf.RoundToInt(t)));
         c.transform.position = activeChunks[activeChunks.Count - 1].GetRightAnchor() + c.width * 0.5f * Vector3.right;
@@ -69,11 +69,17 @@ public class MapGenerator : MonoBehaviour {
         Type t = (Type)n;
         List<Chunk> possibleChunk = new List<Chunk>();
 
+        bool added = false;
 
         foreach(Chunk c in chunks) {
             if(c.type == t) {
                 possibleChunk.Add(c);
+                added = true;
             }
+        }
+
+        if(!added) {
+            possibleChunk.Add(chunks[0]);
         }
 
         return possibleChunk[Random.Range(0, possibleChunk.Count)];

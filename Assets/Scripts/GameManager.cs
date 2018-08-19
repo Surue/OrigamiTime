@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
+
+    [SerializeField]
+    Image winSplash;
 
     static GameManager instance;
     public static GameManager Instance {
@@ -33,5 +37,9 @@ public class GameManager : MonoBehaviour {
     public void PlayerDeath() {
         //SceneManager.LoadScene("LoseScene");
         FindObjectOfType<TimerController>().StopTimer();
+    }
+
+    public void PlayerWin() {
+        winSplash.gameObject.SetActive(true);
     }
 }

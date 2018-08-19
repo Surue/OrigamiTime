@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Spine.Unity;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
@@ -50,6 +51,10 @@ public class PlayerController : MonoBehaviour {
     SkeletonAnimation skeletonBird;
     SkeletonAnimation skeletonActive;
     bool isMorphing = false;
+
+    [Header("UI")]
+    [SerializeField]
+    List<Image> ultimateCoinsImages;
 
     //State
     bool isDead = false;
@@ -159,14 +164,19 @@ public class PlayerController : MonoBehaviour {
         }
 
         if(isJumping) {
-            if(Mathf.Abs(transform.position.y - fixedHeight) < 0.5f && body.velocity.y < 0f) {
+
+            if(animal != Animal.CAT) {
+                if((Mathf.Abs(transform.position.y - fixedHeight) < 0.5f && body.velocity.y < 0f)) {
+                    isJumping = false;
+
+                    skeletonActive.AnimationState.SetAnimation(0, "run", true);
+                    
+                    body.useGravity = false;
+                }
+            } else if((Physics.Raycast(transform.position, Vector3.down, 1f, 1 << LayerMask.NameToLayer("Ground")) && body.velocity.y < 0f)){
                 isJumping = false;
 
                 skeletonActive.AnimationState.SetAnimation(0, "run", true);
-
-                if(animal != Animal.CAT) {
-                    body.useGravity = false;
-                }
             }
         }
 
@@ -296,9 +306,14 @@ public class PlayerController : MonoBehaviour {
         }
 
         if(other.gameObject.layer == LayerMask.NameToLayer("UltimateCoin")) {
+            ultimateCoinsImages[nbUltimeCoin].gameObject.SetActive(true);
             Destroy(other.gameObject);
             timerController.AddTime(10);
             nbUltimeCoin++;
+
+            if(nbUltimeCoin >= ultimateCoinsImages.Count) {
+                GameManager.Instance.PlayerWin();
+            }
         }
     }
 
