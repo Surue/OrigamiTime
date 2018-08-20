@@ -92,65 +92,57 @@ public class PlayerController : MonoBehaviour {
         skeletonActive.AnimationState.SetAnimation(0, "run", true);
 
         timerController = FindObjectOfType<TimerController>();
+
+        transform.position = new Vector3(0, groundHeight, 0);
+        body.velocity = Vector3.right * horizontalSpeed;
+
+        fixedHeight = groundHeight;
     }
 
     void FixedUpdate() {
-        if(isDead) {
-            body.velocity = new Vector3(body.velocity.x, body.velocity.y, 0);
-            return;
-        }
+        //if(isDead) {
+        //    body.velocity = new Vector3(body.velocity.x, body.velocity.y, 0);
+        //    return;
+        //}
 
-        if(animal == Animal.DRAGON) {
-            body.velocity = new Vector3(body.velocity.x * 0.99f, 1, 0);
-            return;
-        }
+        //if(animal == Animal.DRAGON) {
+        //    body.velocity = new Vector3(body.velocity.x * 0.99f, 1, 0);
+        //    return;
+        //}
 
-        if(!body.useGravity && !isJumping) {
-            body.velocity = new Vector3(body.velocity.x, 0, 0);
-        }
+        //if(!body.useGravity && !isJumping) {
+        //    body.velocity = new Vector3(body.velocity.x, 0, 0);
+        //}
 
         float verticalMovement = body.velocity.y + jumpImpulse;
 
-        if(verticalMovement > jumpForce) {
-            verticalMovement = jumpForce;
-        }
-
-        if(isJumping) {
-            if(verticalMovement < 0) {
-                verticalMovement *= fallingMultiplicator;
-            }
-        }
+        //if(verticalMovement > jumpForce) {
+        //    verticalMovement = jumpForce;
+        //}
 
         if(switchState) {
-            if(Mathf.Abs(transform.position.y - fixedHeight) < 0.5f) {
-                switchState = false;
-                if(animal == Animal.FISH) {
-                    body.useGravity = false;
-                }
+            if(Mathf.Abs(transform.position.y - fixedHeight) < 0.3f) {
+                body.velocity = new Vector3(body.velocity.x, 0, 0);
+                transform.position = new Vector3(transform.position.x, fixedHeight, 0);
 
+                switchState = false;
+                
                 skeletonActive.AnimationState.SetAnimation(0, "run", true);
             } else {
                 if(transform.position.y < fixedHeight) {
-                    body.velocity = new Vector3(horizontalSpeed, jumpForce, 0);
+                    body.velocity = new Vector3(body.velocity.x, jumpForce, 0);
                 } else {
-                    body.velocity = new Vector3(horizontalSpeed, verticalMovement, 0);
+                    body.velocity = new Vector3(body.velocity.x, -jumpForce, 0);
                 }
             }
-        }else if(!isJumping) {
-            if(animal != Animal.CAT) {
-                body.velocity = new Vector3(horizontalSpeed, 0, 0);
-                transform.position = new Vector3(transform.position.x, fixedHeight, 0);
-            } else {
-                if(body.velocity.y > 0) {
-                    body.useGravity = false;
-                    body.velocity = new Vector3(horizontalSpeed, body.velocity.y, 0);
-                } else {
-                    body.useGravity = true;
-                    body.velocity = new Vector3(horizontalSpeed, body.velocity.y, 0);
-                }
+        } else if(!isJumping) {
+
+        } else if(isJumping) {
+            if(verticalMovement < 0) {
+                verticalMovement *= fallingMultiplicator;
             }
-        } else {
-            body.velocity = new Vector3(horizontalSpeed, verticalMovement, 0);
+
+            body.velocity = new Vector3(body.velocity.x, verticalMovement, 0);
         }
     }
     
@@ -160,13 +152,14 @@ public class PlayerController : MonoBehaviour {
         }
 
         if(isJumping) {
-            if((Mathf.Abs(transform.position.y - fixedHeight) < 0.6f && body.velocity.y <= 0f)) {
+            if((Mathf.Abs(transform.position.y - fixedHeight) < 0.3f && body.velocity.y <= 0f)) {
                 isJumping = false;
 
+                body.useGravity = false;
+                body.velocity = new Vector3(body.velocity.x, 0, 0);
+                transform.position = new Vector3(transform.position.x, fixedHeight, 0);
+
                 skeletonActive.AnimationState.SetAnimation(0, "run", true);
-                if(animal != Animal.CAT) {
-                    body.useGravity = false;
-                }
             }
         }
 
@@ -176,9 +169,10 @@ public class PlayerController : MonoBehaviour {
         if((Input.GetButtonDown("A") || Input.GetButtonDown("Jump")) && !switchState) {
             if(!isJumping) {
                 isJumping = true;
-                body.useGravity = true;
                 
                 jumpImpulse = jumpForce;
+
+                body.useGravity = true;
             } 
         }
 
@@ -188,10 +182,10 @@ public class PlayerController : MonoBehaviour {
         if(Input.GetKeyDown(KeyCode.A) || Input.GetButtonDown("Y")) {
             if(animal != Animal.FISH && animal != Animal.BIRD) {
                 if(isJumping) {
+                    body.useGravity = false;
                     switchState = true;
                     isJumping = false;
                     animal = Animal.BIRD;
-                    body.useGravity = false;
 
                     StartCoroutine(SwitchSkin(skeletonCat, skeletonBird));
 
@@ -206,21 +200,16 @@ public class PlayerController : MonoBehaviour {
                 switchState = true;
                 animal = Animal.CAT;
                 footCollider.enabled = false;
-                body.useGravity = true;
-
-                body.velocity = new Vector3(body.velocity.x, 0, 0);
 
                 StartCoroutine(SwitchSkin(skeletonBird, skeletonCat));
 
                 fixedHeight = groundHeight;
             } else if(animal == Animal.FISH && isJumping) {
+                body.useGravity = false;
                 switchState = true;
                 isJumping = false;
                 animal = Animal.CAT;
                 footCollider.enabled = false;
-                body.useGravity = true;
-
-                body.velocity = new Vector3(body.velocity.x, 0, 0);
                 
                 StartCoroutine(SwitchSkin(skeletonFish, skeletonCat));
 
@@ -234,21 +223,16 @@ public class PlayerController : MonoBehaviour {
                 switchState = true;
                 animal = Animal.FISH;
                 footCollider.enabled = true;
-                body.useGravity = true;
-
-                body.velocity = new Vector3(body.velocity.x, 0, 0);
 
                 StartCoroutine(SwitchSkin(skeletonBird, skeletonFish));
 
                 fixedHeight = underwaterHeight;
             } else if(animal == Animal.CAT && (isJumping || body.velocity.y < -0.5f)) {
+                body.useGravity = false;
                 switchState = true;
                 isJumping = false;
                 animal = Animal.FISH;
                 footCollider.enabled = true;
-                body.useGravity = true;
-
-                body.velocity = new Vector3(body.velocity.x, 0, 0);
 
                 StartCoroutine(SwitchSkin(skeletonCat, skeletonFish));
 
@@ -260,18 +244,18 @@ public class PlayerController : MonoBehaviour {
         //Animation
         if(isJumping) {
             if(body.velocity.y > 0) {
-                skeletonActive.AnimationState.SetAnimation(0, "jump", true);
+                skeletonActive.AnimationState.SetAnimation(0, "jump", false);
             } else {
-                skeletonActive.AnimationState.SetAnimation(0, "land", true);
+                skeletonActive.AnimationState.SetAnimation(0, "land", false);
             }
         }
 
         if(switchState) {
             if(!isMorphing) {
                 if(body.velocity.y > 0) {
-                    skeletonActive.AnimationState.SetAnimation(0, "jump", true);
+                    skeletonActive.AnimationState.SetAnimation(0, "jump", false);
                 } else {
-                    skeletonActive.AnimationState.SetAnimation(0, "land", true);
+                    skeletonActive.AnimationState.SetAnimation(0, "land", false);
                 }
             }
         }

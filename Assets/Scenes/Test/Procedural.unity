@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -666,7 +666,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 82081216}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d714283ac37875d4281299696dc908be, type: 3}
   m_Name: 
@@ -704,7 +704,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4269859818986938, guid: 5b02eac2fe4df5644963ae6500d2ebcb, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 1
+      value: -4.05
       objectReference: {fileID: 0}
     - target: {fileID: 4269859818986938, guid: 5b02eac2fe4df5644963ae6500d2ebcb, type: 2}
       propertyPath: m_LocalPosition.z
@@ -789,6 +789,36 @@ Prefab:
         type: 2}
       propertyPath: m_Mesh
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114922731134750166, guid: 5b02eac2fe4df5644963ae6500d2ebcb,
+        type: 2}
+      propertyPath: airHeight
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114922731134750166, guid: 5b02eac2fe4df5644963ae6500d2ebcb,
+        type: 2}
+      propertyPath: underwaterHeight
+      value: -8
+      objectReference: {fileID: 0}
+    - target: {fileID: 114922731134750166, guid: 5b02eac2fe4df5644963ae6500d2ebcb,
+        type: 2}
+      propertyPath: groundHeight
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 54495835588285846, guid: 5b02eac2fe4df5644963ae6500d2ebcb,
+        type: 2}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 54495835588285846, guid: 5b02eac2fe4df5644963ae6500d2ebcb,
+        type: 2}
+      propertyPath: m_IsKinematic
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114922731134750166, guid: 5b02eac2fe4df5644963ae6500d2ebcb,
+        type: 2}
+      propertyPath: jumpForce
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5b02eac2fe4df5644963ae6500d2ebcb, type: 2}
@@ -1175,15 +1205,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4980917782703504, guid: d2edb4e7942b0ab4786798c4e187a5b7, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 78.80998
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4980917782703504, guid: d2edb4e7942b0ab4786798c4e187a5b7, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 49.29118
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4980917782703504, guid: d2edb4e7942b0ab4786798c4e187a5b7, type: 2}
       propertyPath: m_LocalPosition.z
-      value: -119.2081
+      value: -15.3
       objectReference: {fileID: 0}
     - target: {fileID: 4980917782703504, guid: d2edb4e7942b0ab4786798c4e187a5b7, type: 2}
       propertyPath: m_LocalRotation.x
@@ -1210,6 +1240,11 @@ Prefab:
       propertyPath: followedObject
       value: 
       objectReference: {fileID: 447254237}
+    - target: {fileID: 114270245724440052, guid: d2edb4e7942b0ab4786798c4e187a5b7,
+        type: 2}
+      propertyPath: offset.z
+      value: -12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d2edb4e7942b0ab4786798c4e187a5b7, type: 2}
   m_IsPrefabAsset: 0
