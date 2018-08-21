@@ -100,6 +100,12 @@ public class PlayerController : MonoBehaviour {
     }
 
     void FixedUpdate() {
+        if(isDead) {
+            body.useGravity = true;
+            body.velocity = new Vector3(body.velocity.x, body.velocity.y, 0);
+            return;
+        }
+
         //if(isDead) {
         //    body.velocity = new Vector3(body.velocity.x, body.velocity.y, 0);
         //    return;
@@ -122,7 +128,7 @@ public class PlayerController : MonoBehaviour {
 
         if(switchState) {
             if(Mathf.Abs(transform.position.y - fixedHeight) < 0.3f) {
-                body.velocity = new Vector3(body.velocity.x, 0, 0);
+                body.velocity = new Vector3(horizontalSpeed, 0, 0);
                 transform.position = new Vector3(transform.position.x, fixedHeight, 0);
 
                 switchState = false;
@@ -130,19 +136,27 @@ public class PlayerController : MonoBehaviour {
                 skeletonActive.AnimationState.SetAnimation(0, "run", true);
             } else {
                 if(transform.position.y < fixedHeight) {
-                    body.velocity = new Vector3(body.velocity.x, jumpForce, 0);
+                    body.velocity = new Vector3(horizontalSpeed, jumpForce, 0);
                 } else {
-                    body.velocity = new Vector3(body.velocity.x, -jumpForce, 0);
+                    body.velocity = new Vector3(horizontalSpeed, -jumpForce, 0);
                 }
             }
         } else if(!isJumping) {
-
+            if(animal == Animal.CAT) {
+                if(Physics.Raycast(transform.position, Vector3.down, 10 , LayerMask.NameToLayer("Ground"))) {
+                    body.velocity = new Vector3(horizontalSpeed, -jumpForce*0.5f, 0);
+                } else {
+                    body.velocity = new Vector3(horizontalSpeed, 0, 0);
+                }
+            } else {
+                body.velocity = new Vector3(horizontalSpeed, 0, 0);
+            }
         } else if(isJumping) {
             if(verticalMovement < 0) {
                 verticalMovement *= fallingMultiplicator;
             }
 
-            body.velocity = new Vector3(body.velocity.x, verticalMovement, 0);
+            body.velocity = new Vector3(horizontalSpeed, verticalMovement, 0);
         }
     }
     
@@ -169,8 +183,12 @@ public class PlayerController : MonoBehaviour {
         if((Input.GetButtonDown("A") || Input.GetButtonDown("Jump")) && !switchState) {
             if(!isJumping) {
                 isJumping = true;
-                
+
                 jumpImpulse = jumpForce;
+
+                if(animal == Animal.FISH) {
+                    jumpImpulse *= 0.5f;
+                }
 
                 body.useGravity = true;
             } 
@@ -205,12 +223,14 @@ public class PlayerController : MonoBehaviour {
 
                 fixedHeight = groundHeight;
             } else if(animal == Animal.FISH && isJumping) {
-                body.useGravity = false;
                 switchState = true;
                 isJumping = false;
                 animal = Animal.CAT;
                 footCollider.enabled = false;
-                
+                body.useGravity = false;
+
+                jumpImpulse = jumpForce * 0.5f;
+
                 StartCoroutine(SwitchSkin(skeletonFish, skeletonCat));
 
                 fixedHeight = groundHeight;
@@ -288,7 +308,7 @@ public class PlayerController : MonoBehaviour {
             return;
         }
 
-        if(other.gameObject.layer == LayerMask.NameToLayer("Water") && animal != Animal.FISH) {
+        if(other.gameObject.layer == LayerMask.NameToLayer("Water") && animal != Animal.FISH && body.velocity.y < 0) {
             KillPlayer();
 
             GameManager.Instance.PlayerDeath();

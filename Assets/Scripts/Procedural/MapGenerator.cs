@@ -29,8 +29,8 @@ public class MapGenerator : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        Chunk c = Instantiate(GetChunk(0));
-        c.transform.position = Vector3.zero;
+        Chunk c = Instantiate(chunks[0]);
+        c.transform.position = new Vector3(0, -4.5f, 0);
 
         activeChunks.Add(c);
 
@@ -39,11 +39,11 @@ public class MapGenerator : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if(Vector3.Distance(activeChunks[activeChunks.Count - 1].GetLeftAnchor(), player.transform.position) < 20) {
+        if(Vector3.Distance(activeChunks[activeChunks.Count - 1].GetLeftAnchor(), player.transform.position) < 50) {
             AddChunk();
         }
 
-        if(Vector3.Distance(activeChunks[0].GetRightAnchor(), player.transform.position) > 20){
+        if(Vector3.Distance(activeChunks[0].GetRightAnchor(), player.transform.position) > activeChunks[0].width){
             DeleteChunk();
         }
     }
@@ -54,10 +54,7 @@ public class MapGenerator : MonoBehaviour {
     }
 
     void AddChunk() {
-        //float t = Mathf.PerlinNoise(Time.time * 0.05f, 0) * (int)Type.LENGHT - 1;
-        float t = Mathf.PingPong(Time.time * 0.2f, (int)Type.LENGHT - 1);
-
-        Chunk c = Instantiate(GetChunk(Mathf.RoundToInt(t)));
+        Chunk c = Instantiate(GetChunk());
         c.transform.position = activeChunks[activeChunks.Count - 1].GetRightAnchor() + c.width * 0.5f * Vector3.right;
 
         activeChunks.Add(c);
@@ -65,23 +62,8 @@ public class MapGenerator : MonoBehaviour {
         nbChunk++;
     }
 
-    Chunk GetChunk(int n) {
-        Type t = (Type)n;
-        List<Chunk> possibleChunk = new List<Chunk>();
-
-        bool added = false;
-
-        foreach(Chunk c in chunks) {
-            if(c.type == t) {
-                possibleChunk.Add(c);
-                added = true;
-            }
-        }
-
-        if(!added) {
-            possibleChunk.Add(chunks[0]);
-        }
-
-        return possibleChunk[Random.Range(0, possibleChunk.Count)];
+    Chunk GetChunk() {
+        return chunks[Random.Range(0, chunks.Count)];
+        //return chunks[1];
     }
 }

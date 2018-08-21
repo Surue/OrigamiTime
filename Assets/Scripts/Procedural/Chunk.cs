@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Chunk : MonoBehaviour {
-
-    [SerializeField]
-    public MapGenerator.Type type;
-    [Range(0, 100)]
+    
+    [Range(0, 200)]
     [SerializeField]
     public int width;
 

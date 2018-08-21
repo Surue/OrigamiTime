@@ -52,7 +52,6 @@ public class GameManager : MonoBehaviour {
     IEnumerator loadLoseScene() {
         yield return new WaitForSeconds(5);
         SceneManager.LoadScene("LoseScene");
-        Debug.Log(timer);
     }
 
     public void PlayerWin() {
