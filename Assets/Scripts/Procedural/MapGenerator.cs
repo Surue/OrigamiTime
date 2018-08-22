@@ -39,7 +39,7 @@ public class MapGenerator : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if(Vector3.Distance(activeChunks[activeChunks.Count - 1].GetLeftAnchor(), player.transform.position) < 50) {
+        if(Vector3.Distance(activeChunks[activeChunks.Count - 1].GetLeftAnchor(), player.transform.position) < activeChunks[0].width) {
             AddChunk();
         }
 

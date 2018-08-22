@@ -23,7 +23,6 @@ public class TimerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         if(isStopped) {
-            text.text = "00:00";
             return;
         }
 
@@ -49,7 +48,6 @@ public class TimerController : MonoBehaviour {
     }
 
     public void StopTimer() {
-        text.text = "00:00";
         isStopped = true;
     }
 

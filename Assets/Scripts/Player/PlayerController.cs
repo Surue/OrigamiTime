@@ -106,28 +106,10 @@ public class PlayerController : MonoBehaviour {
             return;
         }
 
-        //if(isDead) {
-        //    body.velocity = new Vector3(body.velocity.x, body.velocity.y, 0);
-        //    return;
-        //}
-
-        //if(animal == Animal.DRAGON) {
-        //    body.velocity = new Vector3(body.velocity.x * 0.99f, 1, 0);
-        //    return;
-        //}
-
-        //if(!body.useGravity && !isJumping) {
-        //    body.velocity = new Vector3(body.velocity.x, 0, 0);
-        //}
-
         float verticalMovement = body.velocity.y + jumpImpulse;
 
-        //if(verticalMovement > jumpForce) {
-        //    verticalMovement = jumpForce;
-        //}
-
         if(switchState) {
-            if(Mathf.Abs(transform.position.y - fixedHeight) < 0.3f) {
+            if(Mathf.Abs(transform.position.y - fixedHeight) < 0.2f) {
                 body.velocity = new Vector3(horizontalSpeed, 0, 0);
                 transform.position = new Vector3(transform.position.x, fixedHeight, 0);
 
@@ -166,7 +148,7 @@ public class PlayerController : MonoBehaviour {
         }
 
         if(isJumping) {
-            if((Mathf.Abs(transform.position.y - fixedHeight) < 0.3f && body.velocity.y <= 0f)) {
+            if((Mathf.Abs(transform.position.y - fixedHeight) < 0.2f && body.velocity.y <= 0f)) {
                 isJumping = false;
 
                 body.useGravity = false;
@@ -187,7 +169,7 @@ public class PlayerController : MonoBehaviour {
                 jumpImpulse = jumpForce;
 
                 if(animal == Animal.FISH) {
-                    jumpImpulse *= 0.5f;
+                    jumpImpulse *= 1f;
                 }
 
                 body.useGravity = true;
@@ -204,6 +186,7 @@ public class PlayerController : MonoBehaviour {
                     switchState = true;
                     isJumping = false;
                     animal = Animal.BIRD;
+                    headCollider.enabled = true;
 
                     StartCoroutine(SwitchSkin(skeletonCat, skeletonBird));
 
@@ -218,6 +201,7 @@ public class PlayerController : MonoBehaviour {
                 switchState = true;
                 animal = Animal.CAT;
                 footCollider.enabled = false;
+                headCollider.enabled = true;
 
                 StartCoroutine(SwitchSkin(skeletonBird, skeletonCat));
 
@@ -227,6 +211,7 @@ public class PlayerController : MonoBehaviour {
                 isJumping = false;
                 animal = Animal.CAT;
                 footCollider.enabled = false;
+                headCollider.enabled = true;
                 body.useGravity = false;
 
                 jumpImpulse = jumpForce * 0.5f;
@@ -243,6 +228,7 @@ public class PlayerController : MonoBehaviour {
                 switchState = true;
                 animal = Animal.FISH;
                 footCollider.enabled = true;
+                headCollider.enabled = false;
 
                 StartCoroutine(SwitchSkin(skeletonBird, skeletonFish));
 
@@ -253,6 +239,7 @@ public class PlayerController : MonoBehaviour {
                 isJumping = false;
                 animal = Animal.FISH;
                 footCollider.enabled = true;
+                headCollider.enabled = false;
 
                 StartCoroutine(SwitchSkin(skeletonCat, skeletonFish));
 
@@ -268,15 +255,17 @@ public class PlayerController : MonoBehaviour {
             } else {
                 skeletonActive.AnimationState.SetAnimation(0, "land", false);
             }
-        }
-
-        if(switchState) {
+        }else if(switchState) {
             if(!isMorphing) {
                 if(body.velocity.y > 0) {
                     skeletonActive.AnimationState.SetAnimation(0, "jump", false);
                 } else {
                     skeletonActive.AnimationState.SetAnimation(0, "land", false);
                 }
+            }
+        } else {
+            if(skeletonActive.AnimationName != "run") {
+                skeletonActive.AnimationState.SetAnimation(0, "run", true);
             }
         }
 

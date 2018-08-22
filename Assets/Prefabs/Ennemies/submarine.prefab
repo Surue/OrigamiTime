@@ -68,7 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 268b0266bba7ca544a2939e700b03cbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fixedHeight: -5
+  fixedHeight: -8
   horizontalSpeed: -1
 --- !u!212 &212178272266663500
 SpriteRenderer:
