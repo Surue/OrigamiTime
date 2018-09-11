@@ -43,7 +43,7 @@ public class MapGenerator : MonoBehaviour {
             AddChunk();
         }
 
-        if(Vector3.Distance(activeChunks[0].GetRightAnchor(), player.transform.position) > activeChunks[0].width){
+        if(Vector3.Distance(activeChunks[0].GetRightAnchor(), player.transform.position) > activeChunks[0].width) {
             DeleteChunk();
         }
     }

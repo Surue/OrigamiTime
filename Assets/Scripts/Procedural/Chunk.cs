@@ -35,20 +35,22 @@ public class Chunk : MonoBehaviour {
         }
 
         if(coinSpawn.Count > 0) {
-            if(Random.Range(0,4) > 2) {
-                SpawnPoint spawn = coinSpawn[Random.Range(0, coinSpawn.Count)];
-                GameObject instance = Instantiate(FindObjectOfType<MapGenerator>().ultimatesCoins[FindObjectOfType<PlayerController>().nbUltimeCoin], spawn.transform);
-            } else {
-                SpawnPoint spawn = coinSpawn[Random.Range(0, coinSpawn.Count)];
-                GameObject instance = Instantiate(spawn.so_spawnable.prefabToSpawn, spawn.transform);
+            for(int i = 0; i < coinSpawn.Count;i++) {
+                if(Random.Range(0, 3) > 1) {
+                    if(Random.Range(0, 4) > 2) {
+                        SpawnPoint spawn = coinSpawn[Random.Range(0, coinSpawn.Count)];
+                        GameObject instance = Instantiate(FindObjectOfType<MapGenerator>().ultimatesCoins[FindObjectOfType<PlayerController>().nbUltimeCoin], spawn.transform);
+                    } else {
+                        SpawnPoint spawn = coinSpawn[Random.Range(0, coinSpawn.Count)];
+                        GameObject instance = Instantiate(spawn.so_spawnable.prefabToSpawn, spawn.transform);
+                    }
+                }
             }
         }
 
         for(int i = 0; i < ennemySpawn.Count;i++) {
-            if(Random.Range(0,3) > 0.5f) {
+            if(Random.Range(0,3) >= 0f) {
                 Instantiate(ennemySpawn[i].so_spawnable.prefabToSpawn, ennemySpawn[i].transform);
-            } else {
-                i = ennemySpawn.Count;
             }
         }
     }

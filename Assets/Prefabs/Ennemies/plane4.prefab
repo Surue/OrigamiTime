@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 114426171512557304}
   - component: {fileID: 65436649417284466}
   m_Layer: 10
-  m_Name: plane
+  m_Name: plane4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -81,7 +81,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 268b0266bba7ca544a2939e700b03cbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fixedHeight: 7
+  fixedHeight: 4
   horizontalSpeed: -7
 --- !u!212 &212215166786577682
 SpriteRenderer:

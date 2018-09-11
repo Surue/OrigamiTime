@@ -53,10 +53,12 @@ public class PlayerController : MonoBehaviour {
     SkeletonAnimation skeletonDragon;
     SkeletonAnimation skeletonActive;
     bool isMorphing = false;
+    [SerializeField]
+    GameObject droplets;
 
     [Header("UI")]
     [SerializeField]
-    List<Image> ultimateCoinsImages;
+    List<Letters> ultimateCoinsImages;
 
     //State
     bool isDead = false;
@@ -272,7 +274,21 @@ public class PlayerController : MonoBehaviour {
         invulnerabilityTime -= Time.deltaTime;
 	}
 
+    private void OnTriggerExit(Collider other) {
+        if(other.gameObject.layer == LayerMask.NameToLayer("Water")) {
+            GameObject instance = Instantiate(droplets);
+            instance.transform.position = transform.position;
+            Destroy(instance, 3f);
+        }
+    }
+
     private void OnTriggerEnter(Collider other) {
+        if(other.gameObject.layer == LayerMask.NameToLayer("Water")) {
+            GameObject instance = Instantiate(droplets);
+            instance.transform.position = transform.position;
+            Destroy(instance, 3f);
+        }
+
         if(animal == Animal.DRAGON) {
             return;
         }
@@ -305,7 +321,8 @@ public class PlayerController : MonoBehaviour {
         }
 
         if(other.gameObject.layer == LayerMask.NameToLayer("UltimateCoin")) {
-            ultimateCoinsImages[nbUltimeCoin].gameObject.SetActive(true);
+            Debug.Log("Coucou");
+            ultimateCoinsImages[nbUltimeCoin].Founded();
             Destroy(other.gameObject);
             timerController.AddTime(10);
             nbUltimeCoin++;

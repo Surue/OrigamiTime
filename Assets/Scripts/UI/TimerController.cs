@@ -36,10 +36,11 @@ public class TimerController : MonoBehaviour {
         initialTimer -= Time.deltaTime;
 
         text.text = ((int)initialTimer / 60).ToString();
-        if((initialTimer % 60) < 10) {
+        if(initialTimer < 60 && (initialTimer % 60) < 10) {
             text.text = "0" + (initialTimer % 60).ToString();
         } else {
             text.text = (initialTimer - ((int)initialTimer / 60) % 60).ToString();
+            text.text = text.text.Substring(0, 2);
         }
     }
 

@@ -1,0 +1,34 @@
+
+T.png
+size: 512,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+T
+  rotate: false
+  xy: 2, 2
+  size: 102, 161
+  orig: 102, 161
+  offset: 0, 0
+  index: -1
+TG
+  rotate: false
+  xy: 273, 273
+  size: 102, 161
+  orig: 102, 161
+  offset: 0, 0
+  index: -1
+glow
+  rotate: false
+  xy: 2, 165
+  size: 269, 269
+  orig: 269, 269
+  offset: 0, 0
+  index: -1
+shine
+  rotate: false
+  xy: 106, 64
+  size: 99, 99
+  orig: 99, 99
+  offset: 0, 0
+  index: -1
